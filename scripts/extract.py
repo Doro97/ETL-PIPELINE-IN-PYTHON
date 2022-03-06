@@ -27,7 +27,7 @@ def save_raw_data():
                 reader=csv.DictReader(csv_file)
                 # get the first row
                 row=next(reader)
-                print("[Extract] First row: ", row)
+                print("[Extract] Printing the first row: ", row)
 
                 # open csv in with mode
                 with open(raw_path, mode="w",encoding="windows-1252")as csv_file:
@@ -55,7 +55,7 @@ def save_raw_data():
 
 # main function 
 def main():
-    print("[Extract] Start")
+    print("[Extract] Start.....")
     print("[Extract] Saving data from '{source_path}' to '{raw_path}'")
     save_raw_data()
-    print(f"[Extract] End")
+    print(f"[Extract] End...")
