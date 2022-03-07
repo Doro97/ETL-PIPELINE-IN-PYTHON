@@ -14,6 +14,23 @@ class PprRawAll(Base):
     price=Column(String(55))
     descriptiom=Column(String(55))
     # add a uniqueness constraint by concatenating the columns
-    # transaction_id=column_property(date_of_sale+"_"+address+"_"+county+"_"+price)
+    transaction_id=column_property(date_of_sale+"_"+address+"_"+county+"_"+price)
     
+
+class PprCleanAll(Base):
+    __tablename__="ppr_clean_all"
+    
+    id=Column(Integer, primary_key=True)
+    date_of_sale=Column(Date)
+    address=Column(String(255))
+    postal_code=Column(String(55))
+    county=Column(String(55))
+    price=Column(String(55))
+    description=Column(String(55))
+    transaction_id=column_property(cast(date_of_sale,String) + "_" + address + "_" + county + "_"+cast(price,String))
+
+
+
+
+
 
