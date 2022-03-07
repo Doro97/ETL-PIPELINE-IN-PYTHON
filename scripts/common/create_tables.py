@@ -1,6 +1,6 @@
 from base import Base, engine
 # import the PprRawAll table
-from tables import PprRawAll
+from tables import PprRawAll,PprCleanAll
 
 # create the table in the database
 
