@@ -5,7 +5,7 @@ from sqlalchemy import text
 
 from common.tables import PprRawAll
 from common.base import session
-from common.create_tables import
+
 
 # raw path to extract the data
 raw_path ="E:\Data engineering projects\etl-python\ETL-PIPELINE-IN-PYTHON\data\ppr_raw.csv"
@@ -18,14 +18,14 @@ def transform_case(input_string):
 
 def update_date(date_input):
     """Convert the date format from DD/MM/YYYY to YYYY-MM-DD"""
-    current_format=datetime.strptime(date_input,"%d/%m%Y")
+    current_format=datetime.strptime(date_input,"%d/%m/%Y")
     new_format=current_format.strftime("%Y-%m-%d")
 
     return new_format
 
 def update_description(description_input):
     """
-    Simplify the propert description field to show
+    Simplify the property description field to show
     whether a property is 'new' or 'second-hand'
     -"new" if a string contains 'new' substring
     -"second-hand" if a string contains 'second-hand' substring
@@ -77,7 +77,7 @@ def transform_new_data():
                     postal_code=transform_case(row["postal_code"]),
                     county=transform_case(row["county"]),
                     price=update_price(row["price"]),
-                    description=update_description(row["description"]),
+                    # description=update_description(row["description"]),
                 )
             )
 
