@@ -1,4 +1,3 @@
-from audioop import add
 from sqlalchemy import cast, Column,Integer,String,Date
 from sqlalchemy.orm import column_property
 from common.base import Base
@@ -15,6 +14,6 @@ class PprRawAll(Base):
     price=Column(String(55))
     descriptiom=Column(String(55))
     # add a uniqueness constraint by concatenating the columns
-    transaction_id=column_property(date_of_sale+"_"+address+"_"+county+"_"+price)
+    # transaction_id=column_property(date_of_sale+"_"+address+"_"+county+"_"+price)
     
 
