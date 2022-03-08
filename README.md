@@ -44,6 +44,13 @@ On the [transform.py](scripts\transform.py)  script the following actions would 
 4.	Change the description to only show whether a property is new or second hand.
 
 
+### 5. Loading the data
+This phase is dependent on inserting and delete records from the table to remove erroneous rows.
+
+Before loading the data, a new table has to be created that will store the data to be used by the analysts. The new table,*ppr_clean_all* is created on the .
+
+
+
 
 
 
