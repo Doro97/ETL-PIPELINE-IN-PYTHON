@@ -4,6 +4,7 @@ This automated ETL pipeline will extract the [zip](data\PPR-2021.zip) file that 
 
 ## Steps followed
 ### 1. Extracting the data
+Data in this project is contained in a csv file within a zip file. Therefore, the csv file needs to be extracted and saved into the data folder. The [extract.py](scripts\extract.py) script will do the task  of extracting data.
 
 ### 2. Connecting to the postgresql database using SQLAlchemy
 SQLAlchemy is an SQL toolkit that is written in Python. It provides a Pythonic framework that can be used to streamline the workflow and efficiently query the data.
