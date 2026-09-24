@@ -1,11 +1,14 @@
-python3 -c "
+"""Direct CF test: send two deliberately different payloads and compare
+predictions. If they come back identical despite different inputs, the
+bug is inside the CF itself, independent of the extraction pipeline.
+"""
 from google.auth import default, impersonated_credentials
 from google.auth.transport.requests import Request
 import requests
 
-SCOPES = ['https://www.googleapis.com/auth/cloud-platform']
-TARGET_SA = 'inference-cf-invoker@PROJECT.iam.gserviceaccount.com'
-FUNCTION_URL = 'https://REGION-PROJECT.cloudfunctions.net/inference-cf'
+SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
+TARGET_SA = "inference-cf-invoker@PROJECT.iam.gserviceaccount.com"  # <-- fill in, keep quotes
+FUNCTION_URL = "https://REGION-PROJECT.cloudfunctions.net/inference-cf"  # <-- fill in
 
 source_credentials, _ = default(scopes=SCOPES)
 credentials = impersonated_credentials.Credentials(
@@ -16,19 +19,37 @@ credentials = impersonated_credentials.Credentials(
 )
 auth_req = Request()
 credentials.refresh(auth_req)
-url = f'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/{TARGET_SA}:generateIdToken'
-headers = {'Authorization': f'Bearer {credentials.token}', 'Content-Type': 'application/json'}
-resp = requests.post(url, json={'audience': FUNCTION_URL, 'includeEmail': True}, headers=headers)
-id_token = resp.json()['token']
 
-headers = {'Authorization': f'Bearer {id_token}', 'Content-Type': 'application/json'}
+url = f"https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/{TARGET_SA}:generateIdToken"
+headers = {"Authorization": f"Bearer {credentials.token}", "Content-Type": "application/json"}
+resp = requests.post(url, json={"audience": FUNCTION_URL, "includeEmail": True}, headers=headers)
+resp.raise_for_status()
+id_token = resp.json()["token"]
 
-body_a = {'webtris_site_id': 39, 'datetime_hour': '2025-08-05 03:00:00', 'solar': 0.0, 'generation': 27128.0, 'fossil': 4137.0}
-body_b = {'webtris_site_id': 39, 'datetime_hour': '2025-08-05 13:00:00', 'solar': 9842.5, 'generation': 37559.5, 'fossil': 3320.5}
+cf_headers = {"Authorization": f"Bearer {id_token}", "Content-Type": "application/json"}
 
-r1 = requests.post(FUNCTION_URL, json=body_a, headers=headers)
-r2 = requests.post(FUNCTION_URL, json=body_b, headers=headers)
+body_a = {
+    "webtris_site_id": 39,
+    "datetime_hour": "2025-08-05 03:00:00",
+    "solar": 0.0,
+    "generation": 27128.0,
+    "fossil": 4137.0,
+}
+body_b = {
+    "webtris_site_id": 39,
+    "datetime_hour": "2025-08-05 13:00:00",
+    "solar": 9842.5,
+    "generation": 37559.5,
+    "fossil": 3320.5,
+}
 
-print('A:', r1.json())
-print('B:', r2.json())
-"
+r1 = requests.post(FUNCTION_URL, json=body_a, headers=cf_headers, timeout=30)
+r2 = requests.post(FUNCTION_URL, json=body_b, headers=cf_headers, timeout=30)
+
+print("Sent A:", body_a)
+print("Got  A:", r1.json())
+print()
+print("Sent B:", body_b)
+print("Got  B:", r2.json())
+print()
+print("IDENTICAL PREDICTIONS:", r1.json().get("predictions") == r2.json().get("predictions"))
