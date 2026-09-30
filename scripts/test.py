@@ -1,2 +1,3 @@
-result = graph.invoke(initial_state, config)
-print(f"[ask] graph.invoke returned -- template_id={result.get('template_id')!r} flags={result.get('flags')!r} data_points_count={len(result.get('data_points', []))}")
+grep -n -B2 -A8 "def _policy_summary_points" nodes.py
+
+grep -n -B2 -A10 'template_id == "policy_summary"' nodes.py
