@@ -1,0 +1,18 @@
+import numpy as np
+
+truth_lat = np.unique(df["latitude"].to_numpy())
+truth_lon = np.unique(df["longitude"].to_numpy())
+print("in memory:", len(truth_lat), len(truth_lon))
+
+for name, t in [("static", base), ("water_depth", depth)]:
+    lat_t = np.array(sorted(r[0] for r in t.select("latitude").distinct().collect()))
+    lon_t = np.array(sorted(r[0] for r in t.select("longitude").distinct().collect()))
+    print(name,
+          "| lat differing from memory:", len(np.setdiff1d(lat_t, truth_lat)),
+          "| lon differing from memory:", len(np.setdiff1d(lon_t, truth_lon)))
+
+
+bad = np.setdiff1d(lat_t, truth_lat)[:5]
+for v in bad:
+    nearest = truth_lat[np.abs(truth_lat - v).argmin()]
+    print(repr(float(v)), repr(float(nearest)), float(v - nearest))
